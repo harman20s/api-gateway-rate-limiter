@@ -1,24 +1,25 @@
 import type { Request, Response, NextFunction } from "express";
 import { TokenBucketLimiter } from "../rateLimiter/tokenBucket.js";
 import { SlidingWindowLimiter } from "../rateLimiter/slidingWindow.js";
-import { getRateLimitConfig, logTraffic } from "../db/queries.js";
+import { getRateLimitConfig, logTraffic, type RateLimitConfig } from "../db/queries.js";
 import type { Broadcaster } from "../ws/broadcaster.js";
 
-const DEFAULT_CONFIG = {
-  algorithm: "token_bucket" as const,
+const DEFAULT_CONFIG: RateLimitConfig = {
+  clientId: "default",
+  algorithm: "token_bucket",
   capacity: 20,
   refillPerSec: 5,
   windowMs: 1000,
   windowLimit: 20,
 };
 
-const configCache = new Map<string, typeof DEFAULT_CONFIG & { algorithm: "token_bucket" | "sliding_window" }>();
+const configCache = new Map<string, RateLimitConfig>();
 
-async function resolveConfig(clientId: string) {
+async function resolveConfig(clientId: string): Promise<RateLimitConfig> {
   const cached = configCache.get(clientId);
   if (cached) return cached;
   const stored = await getRateLimitConfig(clientId);
-  const resolved = stored ?? { ...DEFAULT_CONFIG, clientId };
+  const resolved: RateLimitConfig = stored ?? { ...DEFAULT_CONFIG, clientId };
   configCache.set(clientId, resolved);
   return resolved;
 }

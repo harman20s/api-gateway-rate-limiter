@@ -86,7 +86,7 @@ const upsertConfig = db.prepare(`
 `);
 
 export async function saveRateLimitConfig(config: RateLimitConfig): Promise<void> {
-  upsertConfig.run(config);
+  upsertConfig.run(config as unknown as Record<string, string | number>);
 }
 
 export async function getRateLimitConfig(clientId: string): Promise<RateLimitConfig | undefined> {
