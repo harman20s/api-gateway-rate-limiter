@@ -1,15 +1,13 @@
 import express from "express";
 import cors from "cors";
 import { createServer } from "node:http";
-import { runMigrations } from "./db/pool.js";
+import "./db/pool.js";
 import { Broadcaster } from "./ws/broadcaster.js";
 import { rateLimitMiddleware } from "./middleware/rateLimitMiddleware.js";
 import { mountGatewayRoutes } from "./gateway/proxy.js";
 import { adminRouter } from "./routes/admin.js";
 import { startSampleService } from "./upstreamServices/sampleService.js";
 import { upstreams } from "./gateway/upstreams.js";
-
-runMigrations();
 
 startSampleService("users-service", 4001);
 startSampleService("orders-service", 4002);

@@ -141,3 +141,8 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# SQLite database files (runtime data, not source)
+*.db
+*.db-shm
+*.db-wal

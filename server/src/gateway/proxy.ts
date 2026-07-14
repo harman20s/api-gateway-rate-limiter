@@ -26,8 +26,8 @@ export function mountGatewayRoutes(app: Express, broadcaster: Broadcaster): void
       changeOrigin: true,
       pathRewrite: { [`^${upstream.routePrefix}`]: "" },
       on: {
-        proxyRes: (_proxyRes, _req, res) => {
-          const status = (res as Response).statusCode;
+        proxyRes: (proxyRes) => {
+          const status = proxyRes.statusCode;
           if (status && status < 500) {
             breaker.recordSuccess();
           } else {

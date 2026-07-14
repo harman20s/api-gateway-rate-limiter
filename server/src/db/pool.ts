@@ -16,3 +16,8 @@ export function runMigrations(): void {
   const schema = readFileSync(path.join(__dirname, "schema.sql"), "utf-8");
   db.exec(schema);
 }
+
+// Run eagerly at import time: queries.ts prepares statements against these
+// tables at its own module-load time, which (in ESM) happens before any
+// code in index.ts runs — including an explicit runMigrations() call there.
+runMigrations();
